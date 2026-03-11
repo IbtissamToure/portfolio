@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ibtisam — AI Student & Writer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #F7F5F0;
+      --bg2: #EFEDE6;
+      --navy: #0B1F3A;
+      --navy-light: #1a3557;
+      --navy-faint: rgba(11,31,58,0.06);
+      --accent: #C8873A;
+      --text: #1a1a1a;
+      --muted: #7a7060;
+      --border: rgba(11,31,58,0.12);
+      --card: #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-weight: 300;
+    }
+
+    /* Subtle grain texture */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 5rem;
+      background: rgba(247,245,240,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: padding 0.3s;
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--navy);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--navy);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--navy); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ---- HERO ---- */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 5rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative circle */
+    #hero::before {
+      content: '';
+      position: absolute;
+      right: -100px; top: 50%;
+      transform: translateY(-50%);
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute;
+      right: 20px; top: 50%;
+      transform: translateY(-50%);
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      pointer-events: none;
+      background: radial-gradient(circle at center, rgba(200,135,58,0.04) 0%, transparent 70%);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.45rem 1.1rem;
+      border-radius: 100px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.1s forwards;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .hero-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 9vw, 8rem);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--navy);
+      opacity: 0;
+      animation: fadeUp 0.8s 0.3s forwards;
+    }
+
+    .hero-role {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-top: 1.2rem;
+      margin-bottom: 1.8rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.5s forwards;
+    }
+
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.35rem;
+      color: var(--navy-light);
+      line-height: 1.5;
+      max-width: 520px;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.7s forwards;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.9s forwards;
+    }
+
+    .btn-navy {
+      background: var(--navy);
+      color: var(--bg);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      text-decoration: none;
+      border: 1px solid var(--navy);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+    .btn-navy:hover {
+      background: var(--navy-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--navy);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .btn-ghost:hover {
+      border-color: var(--navy);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 3rem; left: 5rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 1.3s forwards;
+    }
+    .hero-scroll-hint::after {
+      content: '';
+      width: 1px; height: 40px;
+      background: var(--muted);
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ---- SHARED SECTION STYLES ---- */
+    section {
+      padding: 7rem 5rem;
+      position: relative;
+    }
+
+    .section-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-eyebrow::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
+
+    .section-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--navy);
+      line-height: 1.1;
+      margin-bottom: 3rem;
+    }
+
+    /* ---- ABOUT ---- */
+    #about {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .about-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 0.95rem;
+      line-height: 1.9;
+      color: #3a3530;
+      margin-bottom: 1.4rem;
+      font-weight: 300;
+    }
+    .about-text p strong {
+      color: var(--navy);
+      font-weight: 500;
+    }
+
+    .about-text .essay-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent);
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .about-text .essay-link:hover { border-color: var(--accent); }
+
+    .facts-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .facts-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .facts-list li:last-child { border-bottom: none; }
+    .facts-list li .icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.05rem; }
+    .facts-list li span { color: var(--text); font-weight: 400; }
+
+    /* ---- SKILLS ---- */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .skill-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .skill-block:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(11,31,58,0.08);
+    }
+
+    .skill-block-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .skill-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .skill-items li {
+      font-size: 0.82rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 300;
+    }
+    .skill-items li::before {
+      content: '—';
+      color: var(--accent);
+      font-size: 0.7rem;
+    }
+
+    /* ---- PROJECTS ---- */
+    #projects { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      transition: transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--accent);
+      transition: height 0.35s;
+    }
+    .project-card:hover::before { height: 100%; }
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 50px rgba(11,31,58,0.1);
+    }
+
+    .project-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      transition: color 0.3s;
+    }
+    .project-card:hover .project-num { color: rgba(200,135,58,0.15); }
+
+    .project-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.8rem;
+      line-height: 1.2;
+    }
+
+    .project-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-tag {
+      background: var(--navy-faint);
+      color: var(--navy);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.3rem 0.7rem;
+      letter-spacing: 0.05em;
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .project-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    .project-card.placeholder {
+      background: transparent;
+      border-style: dashed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+    .project-card.placeholder:hover { transform: none; box-shadow: none; }
+    .placeholder-inner { text-align: center; color: var(--muted); }
+    .placeholder-inner .plus { font-size: 2rem; font-weight: 200; margin-bottom: 0.8rem; }
+    .placeholder-inner p { font-size: 0.78rem; letter-spacing: 0.05em; }
+
+    /* ---- WRITING ---- */
+    .writing-card {
+      background: var(--navy);
+      color: var(--bg);
+      padding: 4rem;
+      max-width: 800px;
+      position: relative;
+      overflow: hidden;
+    }
+    .writing-card::before {
+      content: '"';
+      position: absolute;
+      top: -1rem; right: 2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14rem;
+      font-weight: 300;
+      color: rgba(247,245,240,0.05);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .writing-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .writing-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: var(--bg);
+    }
+
+    .writing-excerpt {
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: rgba(247,245,240,0.65);
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .btn-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--bg);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid rgba(247,245,240,0.3);
+      padding: 0.75rem 1.8rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-light:hover {
+      border-color: var(--accent);
+      background: rgba(200,135,58,0.1);
+    }
+
+    /* ---- EDUCATION ---- */
+    #education { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .edu-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+
+    .edu-degree-block {
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+
+    .edu-school {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.3rem;
+    }
+    .edu-degree-name {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 300;
+      margin-bottom: 0.4rem;
+    }
+    .edu-focus {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    .certs-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+    }
+
+    .cert-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .cert-item:last-child { border-bottom: none; }
+
+    .cert-name {
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 0.2rem;
+    }
+    .cert-issuer {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+    .cert-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      background: var(--navy-faint);
+      color: var(--navy);
+      padding: 0.25rem 0.6rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ---- CONTACT ---- */
+    #contact { text-align: center; }
+
+    .contact-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .contact-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1px solid var(--border);
+      color: var(--navy);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.6rem;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    }
+    .contact-link:hover {
+      border-color: var(--navy);
+      background: var(--navy-faint);
+      transform: translateY(-2px);
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      background: var(--navy);
+      color: rgba(247,245,240,0.5);
+      padding: 3rem 5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .footer-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--bg);
+    }
+
+    .footer-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: rgba(247,245,240,0.45);
+      max-width: 420px;
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    /* ---- REVEAL ---- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 5rem 1.5rem; }
+      #hero { padding: 7rem 1.5rem 4rem; }
+      .about-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .edu-main { grid-template-columns: 1fr; gap: 2.5rem; }
+      footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+      .footer-quote { text-align: center; }
+      #hero::before, #hero::after { display: none; }
+    }
+
+    @media (max-width: 580px) {
+      .skills-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">Ibtisam</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#writing">Writing</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">Available for AI internships &amp; research collaborations</div>
+      <h1 class="hero-name">Ibtisam</h1>
+      <div class="hero-role">Artificial Intelligence Student &nbsp;/&nbsp; Future AI Researcher</div>
+      <p class="hero-tagline">"Exploring the intersection of artificial intelligence, human cognition, and society."</p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn-navy">View Projects</a>
+        <a href="#writing" class="btn-ghost">Read My Writing</a>
+        <a href="#contact" class="btn-ghost">Contact Me</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">Scroll</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-eyebrow reveal">About</div>
+    <h2 class="section-heading reveal">Curiosity as a compass</h2>
+    <div class="about-layout">
+      <div class="about-text reveal">
+        <p>
+          I'm <strong>Ibtisam Toure</strong>, a Computer Science student with a deep focus on <strong>Artificial Intelligence</strong>. I'm drawn not only to how intelligent systems function — but to the larger questions they raise about human thinking, meaning, and identity.
+        </p>
+        <p>
+          My technical work sits alongside a genuine interest in <strong>psychology</strong> and the <strong>philosophy of technology</strong>. I believe the engineers building AI systems have a responsibility to understand what they are reshaping — not just technically, but humanly.
+        </p>
+        <p>
+          I write reflective essays about these themes. My piece&nbsp;
+          <a href="#writing" class="essay-link">The Spiritual Cost of Artificial Intelligence ↗</a>
+          &nbsp;explores how technological progress can quietly erode human meaning and belief systems — a question I think the field rarely takes seriously enough.
+        </p>
+        <p>
+          I believe the future of AI should be guided not only by engineering excellence, but by ethical awareness and a deep understanding of what makes us human.
+        </p>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <ul class="facts-list">
+          <li><span class="icon">🎓</span><span>Computer Science student — AI track</span></li>
+          <li><span class="icon">🤖</span><span>Primary focus: Artificial Intelligence</span></li>
+          <li><span class="icon">🐍</span><span>Python certified — University of Michigan</span></li>
+          <li><span class="icon">📚</span><span>Interested in psychology &amp; philosophy of technology</span></li>
+          <li><span class="icon">✍️</span><span>Writes essays on AI and society</span></li>
+          <li><span class="icon">♟</span><span>Learning chess</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-eyebrow reveal">Skills</div>
+    <h2 class="section-heading reveal">What I work with</h2>
+    <div class="skills-grid">
+      <div class="skill-block reveal">
+        <div class="skill-block-title">Programming</div>
+        <ul class="skill-items">
+          <li>Python</li>
+          <li>Java</li>
+          <li>Data Structures &amp; Algorithms</li>
+        </ul>
+      </div>
+      <div class="skill-block reveal reveal-delay-1">
+        <div class="skill-block-title">AI / Data Science</div>
+        <ul class="skill-items">
+          <li>Machine Learning</li>
+          <li>Computer Vision</li>
+          <li>AI Experimentation</li>
+          <li>Deep Learning basics</li>
+        </ul>
+      </div>
+      <div class="skill-block reveal reveal-delay-2">
+        <div class="skill-block-title">Tools</div>
+        <ul class="skill-items">
+          <li>Git &amp; GitHub</li>
+          <li>Jupyter Notebook</li>
+          <li>Google Colab</li>
+          <li>VS Code</li>
+        </ul>
+      </div>
+      <div class="skill-block reveal reveal-delay-3">
+        <div class="skill-block-title">Other</div>
+        <ul class="skill-items">
+          <li>Technical Writing</li>
+          <li>Research Thinking</li>
+          <li>Analytical Reasoning</li>
+          <li>Problem Solving</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-eyebrow reveal">Projects</div>
+    <h2 class="section-heading reveal">Things I've built</h2>
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div class="project-num">01</div>
+        <div class="project-title">AI Drowsiness Detection System</div>
+        <p class="project-desc">
+          A computer vision project that detects signs of driver drowsiness using facial landmarks and eye movement analysis. The system monitors blinking patterns and eye closure duration to identify fatigue and trigger alerts — with a goal of improving road safety.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">Python</span>
+          <span class="project-tag">OpenCV</span>
+          <span class="project-tag">TensorFlow</span>
+          <span class="project-tag">MobileNetV2</span>
+          <span class="project-tag">Computer Vision</span>
+        </div>
+        <a href="https://github.com/IbtissamToure/drowsiness-detection" target="_blank" class="project-link">View on GitHub →</a>
+      </div>
+
+      <div class="project-card placeholder reveal reveal-delay-1">
+        <div class="placeholder-inner">
+          <div class="plus">+</div>
+          <p>Future AI Research Project</p>
+          <p style="margin-top:0.5rem; font-size:0.7rem; opacity:0.6;">Coming soon</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WRITING -->
+  <section id="writing">
+    <div class="section-eyebrow reveal">Writing</div>
+    <h2 class="section-heading reveal">Thinking out loud</h2>
+    <div class="writing-card reveal">
+      <div class="writing-label">Featured Essay</div>
+      <h3 class="writing-title">The Spiritual Cost of Artificial Intelligence</h3>
+      <p class="writing-excerpt">
+        As artificial intelligence becomes more powerful, could humans begin to treat technology as a source of authority, meaning, or even reverence? This essay explores the philosophical undercurrents of our relationship with intelligent systems — and what we risk surrendering in the process.
+      </p>
+      <a href="https://medium.com/@IbtissamToure" target="_blank" class="btn-light">Read on Medium →</a>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-eyebrow reveal">Education</div>
+    <h2 class="section-heading reveal">Academic background</h2>
+    <div class="edu-main">
+      <div class="reveal">
+        <div class="edu-degree-block">
+          <div class="edu-school">Arab Open University</div>
+          <div class="edu-degree-name">Bachelor of Computer Science</div>
+          <div class="edu-focus">Focus: Artificial Intelligence</div>
+        </div>
+        <div class="certs-title">Certifications</div>
+        <div class="cert-item">
+          <div>
+            <div class="cert-name">Python Programming Certificates (×4)</div>
+            <div class="cert-issuer">University of Michigan</div>
+          </div>
+          <span class="cert-badge">Certified</span>
+        </div>
+        <div class="cert-item">
+          <div>
+            <div class="cert-name">Microsoft Certified: Azure AI Fundamentals</div>
+            <div class="cert-issuer">Microsoft</div>
+          </div>
+          <span class="cert-badge">Certified</span>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <div class="certs-title" style="margin-top:0">Additional Credentials</div>
+        <div class="cert-item">
+          <div>
+            <div class="cert-name">HCIA-AI V3.5</div>
+            <div class="cert-issuer">Huawei ICT Academy – IFCE</div>
+          </div>
+          <span class="cert-badge">Certified</span>
+        </div>
+        <div class="cert-item">
+          <div>
+            <div class="cert-name">Introducing Generative AI with AWS</div>
+            <div class="cert-issuer">Udacity</div>
+          </div>
+          <span class="cert-badge">Completed</span>
+        </div>
+        <div class="cert-item">
+          <div>
+            <div class="cert-name">AWS Educate Machine Learning Foundations</div>
+            <div class="cert-issuer">Amazon Web Services (AWS)</div>
+          </div>
+          <span class="cert-badge">Completed</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="section-eyebrow reveal" style="justify-content:center;">Contact</div>
+      <h2 class="section-heading reveal">Let's connect</h2>
+      <p class="contact-quote reveal">
+        "I'm always interested in meaningful conversations about artificial intelligence, research, and the future of technology."
+      </p>
+      <div class="contact-links reveal">
+        <a href="/cdn-cgi/l/email-protection#9ff6fdebecfef2ecfef3f6f7dff8f2fef6f3b1fcf0f2" class="contact-link">✉ Email</a>
+        <a href="https://www.linkedin.com/in/ibtissam-toure-a823172aa/" target="_blank" class="contact-link">↗ LinkedIn</a>
+        <a href="https://github.com/IbtissamToure" target="_blank" class="contact-link">⌥ GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-name">Ibtisam — Artificial Intelligence Student &amp; Writer</div>
+    <div class="footer-quote">"The most important questions about artificial intelligence are not only technical — they are human."</div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Shrink nav on scroll
+    const nav = document.querySelector('nav');
+    windo
