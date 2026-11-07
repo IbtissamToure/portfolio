@@ -1,0 +1,11 @@
+Fonts in this folder are distributed under the SIL Open Font License 1.1
+https://openfontlicense.org
+
+Inter (c) The Inter Project Authors                  https://github.com/rsms/inter
+Bricolage Grotesque (c) The Bricolage Grotesque Project Authors  https://github.com/ateliertriay/bricolage
+IBM Plex Mono and IBM Plex Sans Arabic (c) IBM Corp. https://github.com/IBM/plex
+e-mark.woff2 is a one-glyph subset (U+1D404) of STIX Two Math
+(c) The STIX Fonts Project Authors                   https://github.com/stipub/stixfonts
+
+Technology logos in index.html come from Simple Icons (https://simpleicons.org).
+They remain trademarks of their respective owners.
