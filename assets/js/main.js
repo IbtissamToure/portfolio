@@ -7,7 +7,6 @@
   var doc = document;
   var root = doc.documentElement;
   var STORAGE_KEY = 'portfolio-lang';
-  var LOGO_CHARACTER = '𝐄'; // U+1D404 MATHEMATICAL BOLD CAPITAL E
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
   var toArray = function (list) { return Array.prototype.slice.call(list); };
@@ -131,38 +130,13 @@
     updateJourney();
   }
 
-  /* ---------- Skills: place the 𝐄 hub where the first two clusters meet ---------- */
-  var eco = doc.querySelector('.eco');
-  var ecoHub = doc.querySelector('.eco-hub');
-  function placeHub() {
-    if (!eco || !ecoHub) return;
-    var wide = eco.querySelector('.skill-row.wide');
-    var gap = parseFloat(getComputedStyle(eco).rowGap) || 0;
-    ecoHub.style.setProperty('--hub-y', (wide.offsetTop - gap / 2) + 'px');
-  }
-  languageListeners.push(placeHub);
-  window.addEventListener('resize', placeHub, { passive: true });
-  if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(placeHub);
-  placeHub();
-
-  /* ---------- Linked highlight: headline words and pillar cards ---------- */
-  var linked = toArray(doc.querySelectorAll('[data-stage]'));
-  function highlight(stage) {
-    linked.forEach(function (node) { node.classList.toggle('is-active', node.getAttribute('data-stage') === stage); });
-  }
-  linked.forEach(function (node) {
-    node.addEventListener('pointerenter', function () { highlight(node.getAttribute('data-stage')); });
-    node.addEventListener('pointerleave', function () { highlight(null); });
-  });
-
-  /* ---------- Cursor light, card spotlight, hero depth (mouse and trackpad only) ---------- */
+  /* ---------- Cursor light and card spotlight (mouse and trackpad only) ---------- */
   var pointer = { x: -1000, y: -1000, active: false };
   var heroEl = doc.querySelector('.hero');
 
   if (finePointer.matches && !reduceMotion.matches) {
     var glow = doc.querySelector('.cursor-glow');
     var heroSpot = doc.querySelector('.hero-spot');
-    var depth = doc.querySelector('.identity-depth');
     var glowX = 0, glowY = 0, spotX = 0, spotY = 0, cursorFrame = 0;
 
     var paintCursor = function () {
@@ -176,10 +150,6 @@
         spotX += (localX - spotX) * 0.08;
         spotY += (localY - spotY) * 0.08;
         heroSpot.style.transform = 'translate3d(' + spotX.toFixed(1) + 'px,' + spotY.toFixed(1) + 'px,0)';
-        if (depth) {
-          var dx = (localX / heroBox.width - 0.5) * -12, dy = (localY / heroBox.height - 0.5) * -10;
-          depth.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0)';
-        }
       }
       var settled = Math.abs(pointer.x - glowX) < 0.5 && Math.abs(pointer.y - glowY) < 0.5;
       cursorFrame = settled ? 0 : requestAnimationFrame(paintCursor);
@@ -210,10 +180,9 @@
     });
   }
 
-  /* ---------- Hero network: nodes trace the real 𝐄 glyph and connect outward ---------- */
+  /* ---------- Hero network: nodes drift and connect, responding to the cursor ---------- */
   var canvas = doc.getElementById('hero-network');
-  var markEl = doc.querySelector('.hero-mark');
-  if (canvas && canvas.getContext && markEl) startNetwork();
+  if (canvas && canvas.getContext) startNetwork();
 
   function startNetwork() {
     var ctx = canvas.getContext('2d');
@@ -227,48 +196,6 @@
     var seed = 7;
     function rand() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
 
-    // Reads the logo's shape by drawing the same character at the same place, off screen.
-    function sampleGlyph(limit) {
-      var heroBox = heroEl.getBoundingClientRect();
-      var box = markEl.getBoundingClientRect();
-      var size = parseFloat(getComputedStyle(markEl).fontSize);
-      var w = Math.ceil(box.width), h = Math.ceil(box.height);
-      if (!w || !h) return [];
-      var off = doc.createElement('canvas');
-      off.width = w; off.height = h;
-      var oc = off.getContext('2d', { willReadFrequently: true });
-      oc.font = size + 'px "E Mark"';
-      oc.textBaseline = 'alphabetic';
-      var m = oc.measureText(LOGO_CHARACTER);
-      var ascent = m.fontBoundingBoxAscent || size * 0.762;
-      var descent = m.fontBoundingBoxDescent || size * 0.238;
-      var baseline = (size - (ascent + descent)) / 2 + ascent;
-      oc.fillText(LOGO_CHARACTER, 0, baseline);
-      var data = oc.getImageData(0, 0, w, h).data;
-      var inside = function (x, y) {
-        return x >= 0 && y >= 0 && x < w && y < h && data[(y * w + x) * 4 + 3] > 128;
-      };
-      var edges = [];
-      var step = Math.max(2, Math.round(size / 150));
-      for (var y = 0; y < h; y += step) {
-        for (var x = 0; x < w; x += step) {
-          if (inside(x, y) && (!inside(x - step, y) || !inside(x + step, y) || !inside(x, y - step) || !inside(x, y + step))) {
-            edges.push({ x: x, y: y });
-          }
-        }
-      }
-      // Keep evenly spaced edge points so the outline stays legible.
-      var spacing = size / 15, chosen = [];
-      for (var i = 0; i < edges.length; i++) {
-        var p = edges[Math.floor(rand() * edges.length)];
-        var clear = chosen.every(function (q) { return (q.x - p.x) * (q.x - p.x) + (q.y - p.y) * (q.y - p.y) > spacing * spacing; });
-        if (clear) chosen.push(p);
-        if (chosen.length >= limit) break;
-      }
-      var ox = box.left - heroBox.left, oy = box.top - heroBox.top;
-      return chosen.map(function (p) { return { x: p.x + ox, y: p.y + oy }; });
-    }
-
     function build() {
       var box = heroEl.getBoundingClientRect();
       width = box.width; height = box.height;
@@ -277,19 +204,14 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       seed = 7;
       nodes = [];
-      var glyphPoints = sampleGlyph(coarse ? 34 : 58);
-      glyphPoints.forEach(function (p) {
-        nodes.push({ glyph: true, ax: p.x, ay: p.y, x: p.x, y: p.y, phase: rand() * 6.28, speed: 0.4 + rand() * 0.5, amp: 1.5 + rand() * 2.5 });
-      });
       var free = Math.round(Math.min(coarse ? 26 : 64, width * height / 19000));
       for (var i = 0; i < free; i++) {
-        nodes.push({ glyph: false, x: rand() * width, y: rand() * height, vx: (rand() - 0.5) * 0.28, vy: (rand() - 0.5) * 0.28 });
+        nodes.push({ x: rand() * width, y: rand() * height, vx: (rand() - 0.5) * 0.28, vy: (rand() - 0.5) * 0.28 });
       }
     }
 
     function draw(time) {
       ctx.clearRect(0, 0, width, height);
-      var t = time * 0.001;
       var heroBox = heroEl.getBoundingClientRect();
       var px = pointer.active ? pointer.x - heroBox.left : -9999;
       var py = pointer.active ? pointer.y - heroBox.top : -9999;
@@ -297,16 +219,11 @@
 
       for (i = 0; i < nodes.length; i++) {
         n = nodes[i];
-        if (n.glyph) {
-          n.x = n.ax + Math.sin(t * n.speed + n.phase) * n.amp;
-          n.y = n.ay + Math.cos(t * n.speed * 0.8 + n.phase) * n.amp;
-        } else {
-          n.x += n.vx; n.y += n.vy;
-          if (n.x < -20) n.x = width + 20; else if (n.x > width + 20) n.x = -20;
-          if (n.y < -20) n.y = height + 20; else if (n.y > height + 20) n.y = -20;
-          var cx = n.x - px, cy = n.y - py, cd = cx * cx + cy * cy;
-          if (cd < 22500 && cd > 1) { var push = (22500 - cd) / 22500 * 0.9; var len = Math.sqrt(cd); n.x += cx / len * push; n.y += cy / len * push; }
-        }
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < -20) n.x = width + 20; else if (n.x > width + 20) n.x = -20;
+        if (n.y < -20) n.y = height + 20; else if (n.y > height + 20) n.y = -20;
+        var cx = n.x - px, cy = n.y - py, cd = cx * cx + cy * cy;
+        if (cd < 22500 && cd > 1) { var push = (22500 - cd) / 22500 * 0.9; var len = Math.sqrt(cd); n.x += cx / len * push; n.y += cy / len * push; }
       }
 
       ctx.lineWidth = 0.8;
@@ -314,14 +231,13 @@
         var a = nodes[i];
         for (j = i + 1; j < nodes.length; j++) {
           var b = nodes[j];
-          var bothGlyph = a.glyph && b.glyph;
-          var reach = bothGlyph ? 52 : 118;
+          var reach = 118;
           var dx = a.x - b.x, dy = a.y - b.y;
           if (Math.abs(dx) > reach || Math.abs(dy) > reach) continue;
           var d2 = dx * dx + dy * dy;
           if (d2 > reach * reach) continue;
           var strength = 1 - Math.sqrt(d2) / reach;
-          ctx.strokeStyle = bothGlyph ? 'rgba(255,255,255,' + (0.55 * strength).toFixed(3) + ')' : 'rgba(29,78,216,' + (0.3 * strength).toFixed(3) + ')';
+          ctx.strokeStyle = 'rgba(29,78,216,' + (0.3 * strength).toFixed(3) + ')';
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
         }
         var mx = a.x - px, my = a.y - py, md2 = mx * mx + my * my;
@@ -333,8 +249,8 @@
 
       for (i = 0; i < nodes.length; i++) {
         n = nodes[i];
-        ctx.fillStyle = n.glyph ? 'rgba(255,255,255,.95)' : 'rgba(29,78,216,.62)';
-        ctx.beginPath(); ctx.arc(n.x, n.y, n.glyph ? 1.7 : 1.9, 0, 6.2832); ctx.fill();
+        ctx.fillStyle = 'rgba(29,78,216,.62)';
+        ctx.beginPath(); ctx.arc(n.x, n.y, 1.9, 0, 6.2832); ctx.fill();
       }
     }
 
@@ -351,27 +267,112 @@
       draw(performance.now());
     }
 
-    var fontReady = doc.fonts && doc.fonts.load ? doc.fonts.load('40px "E Mark"', LOGO_CHARACTER) : Promise.resolve();
-    fontReady.catch(function () {}).then(function () {
-      refresh();
-      play();
+    refresh();
+    play();
 
-      var resizeTimer = 0;
-      if ('ResizeObserver' in window) {
-        new ResizeObserver(function () {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(refresh, 160);
-        }).observe(heroEl);
-      }
-      languageListeners.push(function () { requestAnimationFrame(refresh); });
+    var resizeTimer = 0;
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(refresh, 160);
+      }).observe(heroEl);
+    }
+    languageListeners.push(function () { requestAnimationFrame(refresh); });
 
-      if ('IntersectionObserver' in window) {
-        new IntersectionObserver(function (entries) {
-          visible = entries[0].isIntersecting;
-          if (visible) play(); else pause();
-        }).observe(heroEl);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+        if (visible) play(); else pause();
+      }).observe(heroEl);
+    }
+    doc.addEventListener('visibilitychange', function () { if (doc.hidden) pause(); else play(); });
+  }
+
+  /* ---------- Hero figure: scattered signals resolving into one line ---------- */
+  var signalHost = doc.getElementById('signal-canvas');
+  if (signalHost) buildSignalFigure(signalHost);
+
+  function buildSignalFigure(host) {
+    var NS = 'http://www.w3.org/2000/svg';
+    var W = 640, H = 440;
+    var X = [24, 213, 427, 616];   // start, research→strategy, strategy→leadership, end
+    var midY = H / 2;
+    var seed = 11;
+    function rand() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+    function el(name, attrs, parent) {
+      var node = doc.createElementNS(NS, name);
+      Object.keys(attrs).forEach(function (k) { node.setAttribute(k, attrs[k]); });
+      (parent || svg).appendChild(node);
+      return node;
+    }
+    function curve(x0, y0, x1, y1) {
+      var bend = (x1 - x0) * 0.55;
+      return 'C' + (x0 + bend) + ' ' + y0 + ' ' + (x1 - bend) + ' ' + y1 + ' ' + x1 + ' ' + y1;
+    }
+
+    var svg = doc.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+
+    // One band per discipline; these highlight on hover.
+    var bands = {};
+    [['research', 0, X[1]], ['strategy', X[1], X[2] - X[1]], ['leadership', X[2], W - X[2]]].forEach(function (b) {
+      bands[b[0]] = el('rect', { x: b[1], y: 0, width: b[2], height: H, 'class': 'signal-band' });
+    });
+    [X[1], X[2]].forEach(function (x) { el('line', { x1: x, x2: x, y1: 0, y2: H, 'class': 'signal-gate' }); });
+
+    var LANES_A = [52, 94, 136, 178, 220, 262, 304, 346, 388];
+    var LANES_B = [150, 220, 290];
+    var paths = [];
+    var count = 36;
+    for (var i = 0; i < count; i++) {
+      var y0 = 26 + rand() * (H - 52);
+      var x0 = X[0] + rand() * 74;
+      var laneA = LANES_A[Math.floor(rand() * LANES_A.length)];
+      var laneB = LANES_B[Math.min(2, Math.floor(LANES_A.indexOf(laneA) / 3))];
+      var d = 'M' + x0.toFixed(1) + ' ' + y0.toFixed(1) +
+        curve(x0, y0, X[1], laneA) + curve(X[1], laneA, X[2], laneB) + curve(X[2], laneB, X[3] - 16, midY);
+      paths.push(el('path', { d: d, 'class': 'signal-path' }));
+      el('circle', { cx: x0.toFixed(1), cy: y0.toFixed(1), r: 2.2, 'class': 'signal-origin' });
+    }
+    LANES_A.forEach(function (y) { el('circle', { cx: X[1], cy: y, r: 3, 'class': 'signal-node' }); });
+    LANES_B.forEach(function (y) { el('circle', { cx: X[2], cy: y, r: 4.5, 'class': 'signal-node' }); });
+    el('circle', { cx: X[3] - 8, cy: midY, r: 14, 'class': 'signal-halo' });
+    el('circle', { cx: X[3] - 8, cy: midY, r: 7, 'class': 'signal-end' });
+
+    // Slow pulses travel along the paths, skipped when motion is reduced.
+    if (!reduceMotion.matches) {
+      for (var p = 0; p < 12; p++) {
+        var pathIndex = (p * 3) % paths.length;
+        var dot = el('circle', { r: 2.6, 'class': 'signal-pulse' });
+        var motion = doc.createElementNS(NS, 'animateMotion');
+        motion.setAttribute('dur', (11 + rand() * 7).toFixed(1) + 's');
+        motion.setAttribute('begin', (-rand() * 16).toFixed(1) + 's');
+        motion.setAttribute('repeatCount', 'indefinite');
+        motion.setAttribute('path', paths[pathIndex].getAttribute('d'));
+        dot.appendChild(motion);
       }
-      doc.addEventListener('visibilitychange', function () { if (doc.hidden) pause(); else play(); });
+    }
+    host.appendChild(svg);
+
+    if ('IntersectionObserver' in window && svg.pauseAnimations) {
+      new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) svg.unpauseAnimations();
+        else svg.pauseAnimations();
+      }).observe(host);
+    }
+
+    // Linked highlight: headline word, pillar card, and figure band.
+    var linked = toArray(doc.querySelectorAll('[data-stage]'));
+    function highlight(stage) {
+      Object.keys(bands).forEach(function (k) { bands[k].classList.toggle('is-active', k === stage); });
+      linked.forEach(function (node) { node.classList.toggle('is-active', node.getAttribute('data-stage') === stage); });
+    }
+    linked.forEach(function (node) {
+      node.addEventListener('pointerenter', function () { highlight(node.getAttribute('data-stage')); });
+      node.addEventListener('pointerleave', function () { highlight(null); });
     });
   }
 })();
