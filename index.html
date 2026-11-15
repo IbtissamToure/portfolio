@@ -596,19 +596,22 @@
                 </div>
                 <h4><span class="en-run" lang="en">Aegis</span> <span class="project-ar" lang="ar">درع</span></h4>
                 <p class="project-tagline" data-i18n="proj.aegis.tag">Your AI. Your Data. Your Control.</p>
-                <p class="project-desc" data-i18n="proj.aegis.desc">A local-first policy gateway between employees or AI agents and external AI models such as ChatGPT, Claude, and Gemini. Instead of blocking or blanket-redacting, purpose contracts rewrite each prompt to the least revealing form the task needs, and an identifiability budget tracks what a whole conversation has already revealed. Decisions come from deterministic YAML rules, never from an LLM. On held-out synthetic test sessions, Aegis protected 96.9% of conversations that would otherwise identify a person while keeping every fact the task needed. Qualified for the Saif exhibition, with the final exhibition planned for November 2026.</p>
+                <p class="project-desc" data-i18n="proj.aegis.desc">A local-first policy gateway between employees or AI agents and external AI models such as ChatGPT, Claude, and Gemini. Instead of blocking or blanket-redacting, purpose contracts rewrite each prompt to the least revealing form the task needs, and an identifiability budget tracks what a whole conversation has already revealed. Decisions come from deterministic YAML rules, never from an LLM. It also screens prompts for injection and detects sensitive data, including Saudi identifiers, in English and Arabic. Qualified for the Saif exhibition, with the final exhibition planned for November 2026.</p>
+                <ul class="tags">
+                  <li>Python</li><li>FastAPI</li><li>MCP</li><li>YAML</li><li>SQLite</li><li>pytest</li>
+                </ul>
                 <div class="project-links">
                   <a class="text-link" href="https://github.com/IbtissamToure/aegis-v2" target="_blank" rel="noopener">GitHub<svg class="icon-line flip" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
                 </div>
               </div>
               <div class="project-side">
-                <h5 class="label" style="margin:0" data-i18n="proj.aegis.capTitle">Capabilities and ideas</h5>
-                <ul class="cap-list">
-                  <li data-i18n="proj.aegis.c1">Purpose-based data minimization</li>
-                  <li data-i18n="proj.aegis.c2">Identifiability budget across prompts</li>
-                  <li data-i18n="proj.aegis.c3">Prompt injection detection</li>
-                  <li data-i18n="proj.aegis.c4">Dashboard, REST API, and MCP server</li>
-                </ul>
+                <dl class="project-metrics" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+                  <div><dt class="metric-key label" data-i18n="proj.aegis.m1">Identifying sessions protected</dt><dd class="bench-val" dir="ltr" style="--v:0.9690">96.9%</dd></div>
+                  <div><dt class="metric-key label" data-i18n="proj.aegis.m2">Task-needed facts kept</dt><dd class="bench-val" dir="ltr" style="--v:1">100%</dd></div>
+                  <div><dt class="metric-key label" data-i18n="proj.aegis.m3">Unnecessary values leaked</dt><dd class="bench-val" dir="ltr">0%</dd></div>
+                  <div><dt class="metric-key label" data-i18n="proj.aegis.m4">Detection F1, English and Arabic</dt><dd class="bench-val" dir="ltr" style="--v:0.9870">0.987</dd></div>
+                </dl>
+                <p class="project-note" data-i18n="proj.aegis.note">All results come from held-out synthetic test data, and no real personal data is used. The prototype runs locally with a dashboard, a REST API, and an MCP server, backed by 29 automated tests.</p>
               </div>
             </article>
           </div>
@@ -617,25 +620,35 @@
         <div class="project-group">
           <h3 class="project-group-title label" data-i18n="proj.g2">In Progress</h3>
           <div class="project-grid">
-            <article class="project span-5 spot" data-reveal>
-              <svg class="project-motif large" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="22" stroke-dasharray="1 0"/><circle cx="100" cy="100" r="44" stroke-dasharray="3 5"/><circle cx="100" cy="100" r="68" stroke-dasharray="1 7"/><circle cx="100" cy="100" r="92" stroke-dasharray="2 9"/><circle class="fill" cx="100" cy="100" r="9"/></svg>
+            <article class="project span-7 spot" data-reveal>
+              <svg class="project-motif" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="22" stroke-dasharray="1 0"/><circle cx="100" cy="100" r="44" stroke-dasharray="3 5"/><circle cx="100" cy="100" r="68" stroke-dasharray="1 7"/><circle cx="100" cy="100" r="92" stroke-dasharray="2 9"/><circle class="fill" cx="100" cy="100" r="9"/></svg>
               <div class="project-top">
                 <span class="status status-progress" data-i18n="status.progress2">In Progress</span>
                 <span class="project-date" data-i18n="proj.zero.team">Solo project</span>
               </div>
               <h4 class="en-run" lang="en">ZeroFlame</h4>
+              <p class="project-tagline" data-i18n="proj.zero.tag">Evidence map of NASA microgravity fire tests</p>
               <p class="project-role label" data-i18n="proj.zero.event">NASA Space Apps Challenge 2026, Riyadh</p>
               <p class="project-desc" data-i18n="proj.zero.desc">An evidence map of NASA’s Physical Sciences Informatics (PSI) microgravity combustion experiments, built on my own for the Flame in Freefall challenge. Choose a habitat atmosphere, such as the expected Moon Base, and see which recorded tests reach it, which cannot be placed because a value was never recorded, and how each investigation ranks for relevance. Nothing is imputed, and every number traces back to its PSI source row.</p>
               <ul class="tags">
-                <li dir="ltr">Python</li><li dir="ltr">JavaScript</li><li dir="ltr">Plotly</li>
+                <li dir="ltr">Python</li><li dir="ltr">JavaScript</li><li dir="ltr">Plotly</li><li dir="ltr">pytest</li><li dir="ltr">GitHub Pages</li>
               </ul>
               <div class="project-links">
                 <a class="text-link" href="https://ibtissamtoure.github.io/ZeroFlame/" target="_blank" rel="noopener"><span data-i18n="proj.zero.live">Live site</span><svg class="icon-line flip" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
                 <a class="text-link" href="https://github.com/IbtissamToure/ZeroFlame" target="_blank" rel="noopener">GitHub<svg class="icon-line flip" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
               </div>
+              <div class="project-side">
+                <dl class="project-metrics">
+                  <div><dt class="metric-key label" data-i18n="proj.zero.m1">Source-traced test records</dt><dd class="bench-val" dir="ltr">2,009</dd></div>
+                  <div><dt class="metric-key label" data-i18n="proj.zero.m2">NASA PSI data tables</dt><dd class="bench-val" dir="ltr">22</dd></div>
+                  <div><dt class="metric-key label" data-i18n="proj.zero.m3">Investigations ranked</dt><dd class="bench-val" dir="ltr">24</dd></div>
+                  <div><dt class="metric-key label" data-i18n="proj.zero.m4">Tests meeting the Moon Base target</dt><dd class="bench-val" dir="ltr">20</dd></div>
+                </dl>
+                <p class="project-note" data-i18n="proj.zero.note">All 20 matching tests are gaseous-fuel flames. No solid-material test can be placed, because those tables record no pressure. This is a gap in the data, not a safety verdict. The evidence map is live, and the grounded Ask assistant is still in progress. NASA does not endorse this project.</p>
+              </div>
             </article>
 
-            <article class="project span-7 spot" data-reveal>
+            <article class="project span-5 spot" data-reveal>
               <svg class="project-motif" viewBox="0 0 200 200" aria-hidden="true"><line x1="100" y1="100" x2="30" y2="40"/><circle class="fill" cx="30" cy="40" r="4"/><line x1="100" y1="100" x2="100" y2="18"/><circle class="fill" cx="100" cy="18" r="4"/><line x1="100" y1="100" x2="170" y2="40"/><circle class="fill" cx="170" cy="40" r="4"/><line x1="100" y1="100" x2="186" y2="110"/><circle class="fill" cx="186" cy="110" r="4"/><line x1="100" y1="100" x2="146" y2="176"/><circle class="fill" cx="146" cy="176" r="4"/><line x1="100" y1="100" x2="60" y2="176"/><circle class="fill" cx="60" cy="176" r="4"/><line x1="100" y1="100" x2="16" y2="110"/><circle class="fill" cx="16" cy="110" r="4"/><circle class="fill" cx="100" cy="100" r="10"/></svg>
               <div class="project-top">
                 <span class="status status-progress" data-i18n="proj.darsak.status">Front-end prototype, not in production</span>
