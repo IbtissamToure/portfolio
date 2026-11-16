@@ -52,7 +52,7 @@
   <link rel="preload" href="assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/bricolage-latin-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/e-mark.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/styles.css?v=20261115">
+  <link rel="stylesheet" href="assets/css/styles.css?v=20261116">
 </head>
 <body>
   <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -168,7 +168,7 @@
         <div class="about-grid" data-reveal>
           <p class="about-lead" data-i18n="about.lead">I research complex problems, think strategically about solutions, and lead the work needed to turn ideas into meaningful outcomes.</p>
           <div class="about-copy">
-            <p data-i18n="about.p1">I’m a Computer Science student at Arab Open University focused on artificial intelligence, machine learning, and computer vision. My academic research at the SDAIA–KFUPM Joint Research Center for AI asks how models can recognize people and actions in aerial imagery when visibility is limited and scenes are crowded. Since October 2026, I have also been a researcher at ICAIRE, UNESCO’s International Center for AI Research and Ethics, which advances responsible AI through research, governance, and capability building.</p>
+            <p data-i18n="about.p1">I’m a Computer Science student at Arab Open University focused on artificial intelligence, machine learning, and computer vision. My academic research at the SDAIA–KFUPM Joint Research Center for AI asks how models can recognize people and actions in aerial imagery when visibility is limited and scenes are crowded. Since October 2026, I have also been a researcher at ICAIRE, UNESCO’s International Center for AI Research and Ethics, which advances responsible AI through research, governance, and capability building. As a Machine Learning Intern at FlyRank AI, I built a decline-risk ranking for search content on 23,727 real, anonymized pages from 31 websites, and published it as a reproducible research paper.</p>
             <p data-i18n="about.p2">Alongside research, I build technology-driven tools for real needs, from Arabic accessibility to shift safety, and take on operational and organizational roles in student and volunteer initiatives.</p>
             <p class="about-note" data-i18n="about.note">I’m also drawn to the human side of technology, including psychology and the philosophy of AI, and I write occasional essays on what intelligent systems mean for how people think and find meaning.</p>
           </div>
@@ -467,18 +467,18 @@
                 <span class="status status-done" data-i18n="status.completed">Completed</span>
               </div>
               <p class="exp-role" data-i18n="exp.flyrank.role">Machine Learning Intern</p>
-              <p class="exp-desc" data-i18n="exp.flyrank.desc">Worked through a structured machine learning workflow on content-refresh opportunity scoring, using an anonymized dataset.</p>
-              <ol class="workflow">
-                <li data-i18n="exp.flyrank.s1">Research question framing</li>
-                <li data-i18n="exp.flyrank.s2">ML task definition</li>
-                <li data-i18n="exp.flyrank.s3">Data contracts</li>
-                <li data-i18n="exp.flyrank.s4">Feature leakage checks</li>
-                <li data-i18n="exp.flyrank.s5">Signal audits</li>
-                <li data-i18n="exp.flyrank.s6">Baseline evaluation</li>
-                <li data-i18n="exp.flyrank.s7">Model development</li>
-                <li data-i18n="exp.flyrank.s8">Validation audits</li>
-                <li data-i18n="exp.flyrank.s9">Action-oriented recommendations</li>
-              </ol>
+              <p class="exp-desc" data-i18n="exp.flyrank.desc">Applied ML on real, anonymized search and analytics data (Google Search Console and GA4) from 30+ client websites, from research question to a published research paper.</p>
+              <ul class="plain-list exp-points">
+                <li data-i18n="exp.flyrank.p1">Built a leakage-safe model that ranks content pages by their risk of losing 20% or more of their search impressions in the next month, validated on client sites the model never saw: ROC-AUC 0.60 against 0.53 for the best rule, and a top-50 review list that is 84% precise against a 63% base rate.</li>
+                <li data-i18n="exp.flyrank.p2">Found and fixed a data-leakage flaw in my own earlier model, whose features overlapped the outcome month, and showed that the leaked features would have inflated the score up to a fake perfect 1.00.</li>
+                <li data-i18n="exp.flyrank.p3">Wrote and verified a data contract on a 79M-row warehouse (Parquet on Hugging Face, queried with DuckDB): grain checks, source-availability rules, and a 9.8M-row monthly partition audit.</li>
+                <li data-i18n="exp.flyrank.p4">Turned model output into a reason-coded action playbook (Protect, Improve, Investigate, Monitor) with human-review rules and monitoring triggers.</li>
+                <li data-i18n="exp.flyrank.p5">Published the full study as a public research paper with reproducible notebooks.</li>
+              </ul>
+              <div class="project-links">
+                <a class="text-link" href="https://ibtissamtoure.github.io/FlyRank-Internship/" target="_blank" rel="noopener"><span data-i18n="exp.flyrank.paper">Research paper</span><svg class="icon-line flip" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+                <a class="text-link" href="https://github.com/IbtissamToure/FlyRank-Internship" target="_blank" rel="noopener">GitHub<svg class="icon-line flip" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+              </div>
             </li>
           </ol>
         </div>
@@ -553,7 +553,7 @@
         <header class="sec-head" data-reveal>
           <span class="sec-num" dir="ltr">04</span>
           <h2 id="projects-h" data-i18n="proj.title">Ideas taken into practice</h2>
-          <p data-i18n="proj.intro">Accessibility, AI governance, education, workplace safety, and a space challenge. Every project shows its current status.</p>
+          <p data-i18n="proj.intro">Accessibility, AI governance, search analytics, education, workplace safety, and a space challenge. Every project shows its current status.</p>
         </header>
 
         <div class="project-group">
@@ -643,6 +643,34 @@
         <div class="project-group">
           <h3 class="project-group-title label" data-i18n="proj.g3">Completed</h3>
           <div class="project-grid">
+            <article class="project spot" style="grid-column:1/-1" data-reveal>
+              <svg class="project-motif" viewBox="0 0 200 200" aria-hidden="true"><line x1="16" y1="184" x2="184" y2="184"/><line x1="16" y1="16" x2="16" y2="184"/><path d="M16 60L52 44L88 72L124 64L156 116L184 150"/><path d="M16 96L52 90L88 100L124 96L156 104L184 100" stroke-dasharray="3 6"/><circle class="fill" cx="124" cy="64" r="5"/><circle class="fill" cx="184" cy="150" r="5"/></svg>
+              <div class="project-top">
+                <span class="status status-done" data-i18n="status.completed8">Completed</span>
+                <span class="project-date" data-i18n="proj.decline.date">Machine learning internship capstone</span>
+              </div>
+              <h4 data-i18n="proj.decline.name">Which pages are about to lose search visibility?</h4>
+              <p class="project-tagline" data-i18n="proj.decline.tag">A leakage-safe decline-risk ranking that tells content teams which pages to review first</p>
+              <p class="project-role label" data-i18n="proj.decline.role">FlyRank AI, research paper</p>
+              <p class="project-desc" data-i18n="proj.decline.desc">Content teams can review only a handful of pages per client each month, and the common rules of thumb, such as highest traffic first or already dropping first, barely beat random ordering. This study splits each page’s 90-day history into three 30-day windows: the model learns from days 31–90 and predicts days 1–30, so feature and label windows never overlap. It uses 19 features covering traffic volume, momentum, click-through rate, content age, keyword context, and content type, and compares logistic regression and gradient boosting against two rule baselines with 5-fold cross-validation grouped by client.</p>
+              <ul class="tags">
+                <li dir="ltr">Python</li><li dir="ltr">pandas</li><li dir="ltr">scikit-learn</li><li dir="ltr">DuckDB</li><li dir="ltr">Hugging Face Datasets</li><li dir="ltr">matplotlib</li><li dir="ltr">Jupyter</li><li dir="ltr">GitHub Pages</li>
+              </ul>
+              <div class="project-links">
+                <a class="text-link" href="https://ibtissamtoure.github.io/FlyRank-Internship/" target="_blank" rel="noopener"><span data-i18n="proj.decline.paper">Research paper</span><svg class="icon-line flip" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+                <a class="text-link" href="https://github.com/IbtissamToure/FlyRank-Internship" target="_blank" rel="noopener">GitHub<svg class="icon-line flip" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+              </div>
+              <div class="project-side">
+                <dl class="project-metrics">
+                  <div><dt class="metric-key label" data-i18n="proj.decline.m1">ROC-AUC, against 0.53 and 0.51 for the two rules</dt><dd class="bench-val" dir="ltr" style="--v:0.60">0.60</dd></div>
+                  <div><dt class="metric-key label" data-i18n="proj.decline.m2">Precision on the top-50 review list, against a 63% base rate</dt><dd class="bench-val" dir="ltr" style="--v:0.84">84%</dd></div>
+                  <div><dt class="metric-key label" data-i18n="proj.decline.m3">Client sites where it beats the falling-traffic rule</dt><dd class="bench-val" dir="ltr">16 / 20</dd></div>
+                  <div><dt class="metric-key label" data-i18n="proj.decline.m4">Real pages tested, from 31 sites</dt><dd class="bench-val" dir="ltr">23,727</dd></div>
+                </dl>
+                <p class="project-note" data-i18n="proj.decline.note">Tested on real, anonymized pages, with every score measured on client sites the model never saw during training. The ranking supports human review of which pages to check first. It reports observed patterns, not causes.</p>
+              </div>
+            </article>
+
             <article class="project spot" style="grid-column:1/-1" data-reveal>
               <svg class="project-motif" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="22" stroke-dasharray="1 0"/><circle cx="100" cy="100" r="44" stroke-dasharray="3 5"/><circle cx="100" cy="100" r="68" stroke-dasharray="1 7"/><circle cx="100" cy="100" r="92" stroke-dasharray="2 9"/><circle class="fill" cx="100" cy="100" r="9"/></svg>
               <div class="project-top">
@@ -738,13 +766,15 @@
             <li class="pill" data-i18n="skills.tl">Transfer Learning</li>
             <li class="pill" data-i18n="skills.gnn">Graph Neural Networks</li>
             <li class="pill" data-i18n="skills.fusion">Multimodal Fusion</li>
+            <li class="pill" data-i18n="skills.binary">Binary Classification</li>
+            <li class="pill" data-i18n="skills.ranking">Ranking Metrics (Precision@K, ROC-AUC)</li>
           </ul>
         </div>
 
         <div class="skill-row spot" data-reveal>
           <div>
             <h3 data-i18n="skills.g2">Research &amp; Computer Vision</h3>
-            <p class="skill-evidence" data-i18n="skills.g2e">Used in the VGMKG and GAMT manuscripts, Munsit, and Driver Drowsiness Detection.</p>
+            <p class="skill-evidence" data-i18n="skills.g2e">Used in the VGMKG and GAMT manuscripts, the FlyRank AI research paper, Munsit, and Driver Drowsiness Detection.</p>
           </div>
           <ul class="orbs">
             <li class="tile" style="--brand:#5C3EE8"><svg aria-hidden="true"><use href="#i-opencv"/></svg><span dir="ltr">OpenCV</span></li>
@@ -758,6 +788,9 @@
             <li class="pill" data-i18n="skills.method">Research Methodology</li>
             <li class="pill" data-i18n="skills.exp">Experimental Design</li>
             <li class="pill" data-i18n="skills.abl">Ablation Studies</li>
+            <li class="pill" data-i18n="skills.baseline">Baseline Design</li>
+            <li class="pill" data-i18n="skills.leak">Leakage Detection</li>
+            <li class="pill" data-i18n="skills.error">Error Analysis</li>
             <li class="pill" data-i18n="skills.lit">Literature Review</li>
             <li class="pill" data-i18n="skills.writing">Academic Writing</li>
           </ul>
@@ -783,6 +816,12 @@
             <li class="pill" data-i18n="skills.data">Data Analysis</li>
             <li class="pill" data-i18n="skills.prep">Data Preprocessing</li>
             <li class="pill" data-i18n="skills.eval">Model Evaluation</li>
+            <li class="pill" data-i18n="skills.gcv">Grouped Cross-Validation</li>
+            <li class="pill"><span dir="ltr">SQL / DuckDB</span></li>
+            <li class="pill" data-i18n="skills.contracts">Data Contracts</li>
+            <li class="pill" data-i18n="skills.features">Time-Window Feature Engineering</li>
+            <li class="pill" data-i18n="skills.missing">Missing-Data Handling</li>
+            <li class="pill" data-i18n="skills.viz">Data Visualization</li>
             <li class="pill"><span dir="ltr">HPC / SLURM</span></li>
           </ul>
         </div>
@@ -910,7 +949,7 @@
     </div>
   </footer>
 
-  <script src="assets/js/translations.js?v=20261115"></script>
-  <script src="assets/js/main.js?v=20261115"></script>
+  <script src="assets/js/translations.js?v=20261116"></script>
+  <script src="assets/js/main.js?v=20261116"></script>
 </body>
 </html>
